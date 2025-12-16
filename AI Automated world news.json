@@ -1,0 +1,298 @@
+{
+  "name": "AI Automated world news",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://www.theverge.com/rss/index.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedReadTool",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        624
+      ],
+      "id": "749ec916-5d52-4150-987d-e2d039400860",
+      "name": "Get Tech News"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Reads the news",
+        "url": "=https://feeds.bbci.co.uk/news/world/rss.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedReadTool",
+      "typeVersion": 1.2,
+      "position": [
+        128,
+        624
+      ],
+      "id": "faa06ba8-1d56-4c57-9770-9d3e941fc327",
+      "name": "Get World News"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -544,
+        608
+      ],
+      "id": "bcfc2a61-9fc6-4b82-8b13-c8b2e8fd2a0a",
+      "name": "Run every day at 7AM",
+      "notesInFlow": true,
+      "notes": "Double-click to open"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "85b5c530-2c13-4424-ab83-05979bc879a5",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        176,
+        400
+      ],
+      "id": "5d930b8a-9ac6-4587-892d-eb829ea2ed35",
+      "name": "Output",
+      "notesInFlow": true,
+      "notes": "Double-click to open"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -544,
+        400
+      ],
+      "id": "a8460bda-7823-4ec5-9717-dea07a06633b",
+      "name": "Click ‘Execute workflow’ to run"
+    },
+    {
+      "parameters": {
+        "content": "## ⚡ Start here:",
+        "height": 224,
+        "width": 224,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        336
+      ],
+      "id": "33611288-127c-46c2-b3e3-4780e539731d",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -256,
+        624
+      ],
+      "id": "d5c69550-513d-4a4a-8c20-ae30568a1193",
+      "name": "OpenAI Model",
+      "notesInFlow": true,
+      "credentials": {
+        "openAiApi": {
+          "id": "uvYxfulZXs3ogkvf",
+          "name": "n8n free OpenAI API credits"
+        }
+      },
+      "notes": "Double-click to open"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Summarize world news and tech news from the last 24 hours. \nSkip your comments. \nThe titles should be \"World news:\" and \"Tech news:\" \nToday is {{ $today }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -256,
+        400
+      ],
+      "id": "de04a2ee-ac1d-42a7-a2a6-b90f5cf18f11",
+      "name": "AI Summary Agent",
+      "notesInFlow": true,
+      "notes": "Double-click to open"
+    },
+    {
+      "parameters": {
+        "content": "### Double click here to see the results:",
+        "height": 240,
+        "width": 192,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        128,
+        320
+      ],
+      "id": "d9af2526-d1e4-4b83-9296-66b0d85d7cb6",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "### 📰 Daily AI Summary\n\n\nThis workflow gets the latest news and asks AI to summarize it for you.\n\n⭐ Bonus: Send the summary via email by connecting your Gmail account\n\n▶ Watch the video to get started ",
+        "height": 272,
+        "width": 1104,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -624,
+        32
+      ],
+      "id": "8885e82b-80a9-4a34-895b-e301f75e7454",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "sendTo": "ajayumredkar1978@gmail.com",
+        "subject": "Your news daily summary",
+        "emailType": "text",
+        "message": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        448,
+        400
+      ],
+      "id": "ea66ea29-b6ea-425e-abc1-1e0f7d4bbde6",
+      "name": "Send summary by email",
+      "webhookId": "4eb43143-029f-478d-931d-b9f787381fb3",
+      "notesInFlow": true,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "TL6HApW9RR3BFdfb",
+          "name": "Gmail account"
+        }
+      },
+      "notes": "Double-click to open"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get Tech News": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Summary Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get World News": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Summary Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run every day at 7AM": {
+      "main": [
+        [
+          {
+            "node": "AI Summary Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Click ‘Execute workflow’ to run": {
+      "main": [
+        [
+          {
+            "node": "AI Summary Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Summary Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Summary Agent": {
+      "main": [
+        [
+          {
+            "node": "Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Output": {
+      "main": [
+        [
+          {
+            "node": "Send summary by email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "versionId": "5fe3284d-70e1-401b-9a91-84edbfbd4d14",
+  "meta": {
+    "templateId": "ready-to-run-ai-workflow",
+    "templateCredsSetupCompleted": true,
+    "instanceId": "55f4663b9e234c0b06da1616100d6b91132283b3c0d4c90eafd23919b780dc5b"
+  },
+  "id": "cQPkysSlJF4TscMn",
+  "tags": []
+}
